@@ -1,0 +1,157 @@
+{
+  "RunType": "HTTP",
+  "Labels": "istio_w2_cpu1.0",
+  "StartTime": "2020-07-08T05:26:38.334138428Z",
+  "RequestedQPS": "3000",
+  "RequestedDuration": "2m0s",
+  "ActualQPS": 2999.963976357573,
+  "ActualDuration": 120001440963,
+  "NumThreads": 8,
+  "Version": "1.4.1",
+  "DurationHistogram": {
+    "Count": 360000,
+    "Min": 0.000435118,
+    "Max": 0.001879834,
+    "Sum": 311.888478035,
+    "Avg": 0.0008663568834305556,
+    "StdDev": 0.00018088662296832545,
+    "Data": [
+      {
+        "Start": 0.000435118,
+        "End": 0.00045000000000000004,
+        "Percent": 0.005833333333333334,
+        "Count": 21
+      },
+      {
+        "Start": 0.00045000000000000004,
+        "End": 0.0005,
+        "Percent": 2.171666666666667,
+        "Count": 7797
+      },
+      {
+        "Start": 0.0005,
+        "End": 0.00055,
+        "Percent": 8.223333333333333,
+        "Count": 21786
+      },
+      {
+        "Start": 0.00055,
+        "End": 0.0006000000000000001,
+        "Percent": 13.315277777777778,
+        "Count": 18331
+      },
+      {
+        "Start": 0.0006000000000000001,
+        "End": 0.0007,
+        "Percent": 20.810833333333335,
+        "Count": 26984
+      },
+      {
+        "Start": 0.0007,
+        "End": 0.0008,
+        "Percent": 25.355555555555554,
+        "Count": 16361
+      },
+      {
+        "Start": 0.0008,
+        "End": 0.0009000000000000001,
+        "Percent": 50.388888888888886,
+        "Count": 90120
+      },
+      {
+        "Start": 0.0009000000000000001,
+        "End": 0.001,
+        "Percent": 82.53527777777778,
+        "Count": 115727
+      },
+      {
+        "Start": 0.001,
+        "End": 0.00125,
+        "Percent": 98.33944444444444,
+        "Count": 56895
+      },
+      {
+        "Start": 0.00125,
+        "End": 0.0015,
+        "Percent": 99.95138888888889,
+        "Count": 5803
+      },
+      {
+        "Start": 0.0015,
+        "End": 0.00175,
+        "Percent": 99.99638888888889,
+        "Count": 162
+      },
+      {
+        "Start": 0.00175,
+        "End": 0.001879834,
+        "Percent": 100,
+        "Count": 13
+      }
+    ],
+    "Percentiles": [
+      {
+        "Percentile": 50,
+        "Value": 0.0008984465157567689
+      },
+      {
+        "Percentile": 75,
+        "Value": 0.000976559489142551
+      },
+      {
+        "Percentile": 90,
+        "Value": 0.0011180815537393445
+      },
+      {
+        "Percentile": 99,
+        "Value": 0.0013524470101671556
+      },
+      {
+        "Percentile": 99.9,
+        "Value": 0.001492029984490782
+      }
+    ]
+  },
+  "Exactly": 0,
+  "Jitter": false,
+  "RetCodes": {
+    "200": 360000
+  },
+  "Sizes": {
+    "Count": 360000,
+    "Min": 124,
+    "Max": 124,
+    "Sum": 44640000,
+    "Avg": 124,
+    "StdDev": 0,
+    "Data": [
+      {
+        "Start": 124,
+        "End": 124,
+        "Percent": 100,
+        "Count": 360000
+      }
+    ],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 360000,
+    "Min": 124,
+    "Max": 124,
+    "Sum": 44640000,
+    "Avg": 124,
+    "StdDev": 0,
+    "Data": [
+      {
+        "Start": 124,
+        "End": 124,
+        "Percent": 100,
+        "Count": 360000
+      }
+    ],
+    "Percentiles": null
+  },
+  "URL": "http://localhost:9999",
+  "SocketCount": 8,
+  "AbortOn": 0
+}

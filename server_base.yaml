@@ -1,0 +1,154 @@
+node:
+  id: "server-envoy"
+  cluster: "fortioclient.istio-test-data-planeperf"
+  metadata:
+      NAME: "fortioclient-67fd7dd5c8-jzw7x"
+      sidecar.istio.io/proxyCPU: "1000m"
+      INTERCEPTION_MODE: "REDIRECT"
+      MESH_ID: "cluster.local"
+      CONFIG_NAMESPACE: "istio-test-data-planeperf"
+      WORKLOAD_NAME: "fortioclient"
+      prometheus.io/scrape: "true"
+      sidecar.istio.io/inject: "true"
+      POD_NAME: "fortioclient-67fd7dd5c8-jzw7x"
+      ISTIO_PROXY_SHA: "istio-proxy:5f5d621c9fd0b68e12c8e1b95db849588fbdc475"
+      sidecar.istio.io/statsInclusionPrefixes: "cluster.outbound,listener,cluster_manager,listener_manager,http_mixer_filter,tcp_mixer_filter,server,cluster.xds-grpc"
+      app: "fortioclient"
+      NAMESPACE: "istio-test-data-planeperf"
+      INCLUDE_INBOUND_PORTS: ""
+      EXCHANGE_KEYS: "NAME,NAMESPACE,INSTANCE_IPS,LABELS,OWNER,PLATFORM_METADATA,WORKLOAD_NAME,CANONICAL_TELEMETRY_SERVICE,MESH_ID,SERVICE_ACCOUNT"
+      INSTANCE_IPS: "100.64.9.32,fd41:98cb:a6ff:5a6a:ffff::74e3,fe80::c0ba:77ff:fe7e:bbee"
+      pod-template-hash: "67fd7dd5c8"
+      POD_PORTS: "[\n]"
+      SERVICE_ACCOUNT: "default"
+      OWNER: "kubernetes://apis/apps/v1/namespaces/istio-test-data-planeperf/deployments/fortioclient"
+      ISTIO_VERSION: "1.4.3"
+      sidecar.istio.io/proxyMemory: "512m"
+      CLUSTER_ID: "Kubernetes"
+      LABELS:
+        app: fortioclient
+        pod-template-hash: "67fd7dd5c8"
+static_resources:
+  listeners:
+  # define an origin server on :10000 that always returns "lorem ipsum..."
+  - address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 10000
+    traffic_direction: INBOUND
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          generate_request_id: false
+          codec_type: auto
+          stat_prefix: ingress_http
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: service
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: ''
+                direct_response:
+                  status: 200
+          http_filters:
+            - name: envoy.router
+              config:
+                dynamic_stats: false
+admin:
+  access_log_path: /tmp/envoy.log
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8081
+stats_config:
+  stats_tags:
+    - tag_name: "cluster_name"
+      regex: "^cluster\\.((.+?(\\..+?\\.svc\\.cluster\\.local)?)\\.)"
+    - tag_name: "tcp_prefix"
+      regex: "^tcp\\.((.*?)\\.)\\w+?$"
+    - tag_name: "response_code"
+      regex: "(response_code=\\.=(.+?);\\.;)|_rq(_(\\.d{3}))$"
+    - tag_name: "response_code_class"
+      regex: "_rq(_(\\dxx))$"
+    - tag_name: "http_conn_manager_listener_prefix"
+      regex: "^listener(?=\\.).*?\\.http\\.(((?:[_.[:digit:]]*|[_\\[\\]aAbBcCdDeEfF[:digit:]]*))\\.)"
+    - tag_name: "http_conn_manager_prefix"
+      regex: "^http\\.(((?:[_.[:digit:]]*|[_\\[\\]aAbBcCdDeEfF[:digit:]]*))\\.)"
+    - tag_name: "listener_address"
+      regex: "^listener\\.(((?:[_.[:digit:]]*|[_\\[\\]aAbBcCdDeEfF[:digit:]]*))\\.)"
+    - tag_name: "mongo_prefix"
+      regex: "^mongo\\.(.+?)\\.(collection|cmd|cx_|op_|delays_|decoding_)(.*?)$"
+    - tag_name: "reporter"
+      regex: "(reporter=\\.=(.+?);\\.;)"
+    - tag_name: "source_namespace"
+      regex: "(source_namespace=\\.=(.+?);\\.;)"
+    - tag_name: "source_workload"
+      regex: "(source_workload=\\.=(.+?);\\.;)"
+    - tag_name: "source_workload_namespace"
+      regex: "(source_workload_namespace=\\.=(.+?);\\.;)"
+    - tag_name: "source_principal"
+      regex: "(source_principal=\\.=(.+?);\\.;)"
+    - tag_name: "source_app"
+      regex: "(source_app=\\.=(.+?);\\.;)"
+    - tag_name: "source_version"
+      regex: "(source_version=\\.=(.+?);\\.;)"
+    - tag_name: "destination_namespace"
+      regex: "(destination_namespace=\\.=(.+?);\\.;)"
+    - tag_name: "destination_workload"
+      regex: "(destination_workload=\\.=(.+?);\\.;)"
+    - tag_name: "destination_workload_namespace"
+      regex: "(destination_workload_namespace=\\.=(.+?);\\.;)"
+    - tag_name: "destination_principal"
+      regex: "(destination_principal=\\.=(.+?);\\.;)"
+    - tag_name: "destination_app"
+      regex: "(destination_app=\\.=(.+?);\\.;)"
+    - tag_name: "destination_version"
+      regex: "(destination_version=\\.=(.+?);\\.;)"
+    - tag_name: "destination_service"
+      regex: "(destination_service=\\.=(.+?);\\.;)"
+    - tag_name: "destination_service_name"
+      regex: "(destination_service_name=\\.=(.+?);\\.;)"
+    - tag_name: "destination_service_namespace"
+      regex: "(destination_service_namespace=\\.=(.+?);\\.;)"
+    - tag_name: "request_protocol"
+      regex: "(request_protocol=\\.=(.+?);\\.;)"
+    - tag_name: "response_flags"
+      regex: "(response_flags=\\.=(.+?);\\.;)"
+    - tag_name: "connection_security_policy"
+      regex: "(connection_security_policy=\\.=(.+?);\\.;)"
+    - tag_name: "permissive_response_code"
+      regex: "(permissive_response_code=\\.=(.+?);\\.;)"
+    - tag_name: "permissive_response_policyid"
+      regex: "(permissive_response_policyid=\\.=(.+?);\\.;)"
+    - tag_name: "cache"
+      regex: "(cache\\.(.+?)\\.)"
+    - tag_name: "component"
+      regex: "(component\\.(.+?)\\.)"
+    - tag_name: "tag"
+      regex: "(tag\\.(.+?)\\.)"
+
+  use_all_default_tags: false
+  stats_matcher:
+    inclusion_list:
+      patterns:
+        - prefix: "reporter="
+        - prefix: "component"
+        - prefix: "cluster.outbound"
+        - prefix: "listener"
+        - prefix: "cluster_manager"
+        - prefix: "listener_manager"
+        - prefix: "http_mixer_filter"
+        - prefix: "tcp_mixer_filter"
+        - prefix: "server"
+        - prefix: "cluster.xds-grpc"
+        - prefix: "cluster_manager"
+        - prefix: "listener_manager"
+        - prefix: "http_mixer_filter"
+        - prefix: "tcp_mixer_filter"
+        - prefix: "server"
+        - prefix: "cluster.xds-grpc"
+        - suffix: "ssl_context_update_by_sds"

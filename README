@@ -1,0 +1,72 @@
+fortio --> proxy --> server
+
+1. docker run --rm --cpus=4.0 --network host --name a4b-proxy -it -v /home/mjog_google_com/a4b:/config --entrypoint=/usr/local/bin/envoy istio/proxyv2:1.6.4 --concurrency 5 -c /config/proxy.yaml --base-id 2
+2. docker run --rm --cpus=4.0 --network host --name a4b-server -it -v /home/mjog_google_com/a4b:/config --entrypoint=/usr/local/bin/envoy istio/proxyv2:1.6.4 --concurrency 5 -c /config/server.yaml --base-id 4
+
+taskset 4 cpus per proxy
+sudo taskset -p 0x700 13752
+sudo taskset -p 0x7000 serverpid
+sudo taskset -p 0x70000 fortio_client
+----
+taskset 0x7 ./usr/bin/fortio load -qps 3000 -t 60s -c 8 http://localhost:9999
+Fortio 1.4.1 running at 3000 queries per second, 3->3 procs, for 1m0s: http://localhost:9999
+03:01:34 I httprunner.go:82> Starting http test for http://localhost:9999 with 8 threads at 3000.0 qps
+Starting at 3000 qps with 8 thread(s) [gomax 3] for 1m0s : 22500 calls each (total 180000)
+03:02:34 I periodic.go:543> T001 ended after 1m0.000505374s : 22500 calls. qps=374.99684143910423
+03:02:34 I periodic.go:543> T003 ended after 1m0.000714766s : 22500 calls. qps=374.9955327657171
+03:02:34 I periodic.go:543> T002 ended after 1m0.000736188s : 22500 calls. qps=374.99539888145483
+03:02:34 I periodic.go:543> T004 ended after 1m0.000725566s : 22500 calls. qps=374.99546526733747
+03:02:34 I periodic.go:543> T007 ended after 1m0.000905503s : 22500 calls. qps=374.9943406916587
+03:02:34 I periodic.go:543> T000 ended after 1m0.000935924s : 22500 calls. qps=374.9941505662438
+03:02:34 I periodic.go:543> T005 ended after 1m0.000953714s : 22500 calls. qps=374.99403938224543
+03:02:34 I periodic.go:543> T006 ended after 1m0.000943115s : 22500 calls. qps=374.99410562390125
+Ended after 1m0.001011277s : 180000 calls. qps=2999.9
+Sleep times : count 179992 avg 0.0017266621 +/- 0.000166 min 0.000868933 max 0.002236476 sum 310.78536
+Aggregated Function Time : count 180000 avg 0.00077612481 +/- 0.0001517 min 0.000333962 max 0.001636804 sum 139.702466
+# range, mid point, percentile, count
+>= 0.000333962 <= 0.001 , 0.000666981 , 96.04, 172870
+> 0.001 <= 0.0016368 , 0.0013184 , 100.00, 7130
+# target 50% 0.000680714
+# target 75% 0.000854093
+# target 90% 0.00095812
+# target 99% 0.00147604
+# target 99.9% 0.00162073
+Sockets used: 8 (for perfect keepalive, would be 8)
+Jitter: false
+Code 200 : 180000 (100.0 %)
+Response Header Sizes : count 180000 avg 124 +/- 0 min 124 max 124 sum 22320000
+Response Body/Total Sizes : count 180000 avg 124 +/- 0 min 124 max 124 sum 22320000
+
+-----
+noistio
+-----
+
+$ taskset 0x7 ./usr/bin/fortio load -qps 3000 -t 60s -c 8 http://localhost:9999                                                                                                                  [1/1344]
+Fortio 1.4.1 running at 3000 queries per second, 3->3 procs, for 1m0s: http://localhost:9999
+03:12:23 I httprunner.go:82> Starting http test for http://localhost:9999 with 8 threads at 3000.0 qps
+Starting at 3000 qps with 8 thread(s) [gomax 3] for 1m0s : 22500 calls each (total 180000)
+03:13:23 I periodic.go:543> T005 ended after 1m0.00067605s : 22500 calls. qps=374.99577473510817
+03:13:23 I periodic.go:543> T003 ended after 1m0.000752195s : 22500 calls. qps=374.9952988401865
+03:13:23 I periodic.go:543> T006 ended after 1m0.000894043s : 22500 calls. qps=374.9944123145105
+03:13:23 I periodic.go:543> T007 ended after 1m0.000912212s : 22500 calls. qps=374.994298761679
+03:13:23 I periodic.go:543> T002 ended after 1m0.000941071s : 22500 calls. qps=374.99411839850006
+03:13:23 I periodic.go:543> T001 ended after 1m0.000955626s : 22500 calls. qps=374.99402743262567
+03:13:23 I periodic.go:543> T000 ended after 1m0.000969292s : 22500 calls. qps=374.9939420228658
+03:13:23 I periodic.go:543> T004 ended after 1m0.000983203s : 22500 calls. qps=374.99385508194507
+Ended after 1m0.001046704s : 180000 calls. qps=2999.9
+Sleep times : count 179992 avg 0.0020080809 +/- 0.0001347 min 0.000966144 max 0.002387716 sum 361.438505
+Aggregated Function Time : count 180000 avg 0.00050280912 +/- 0.0001063 min 0.000219318 max 0.001496822 sum 90.5056423
+# range, mid point, percentile, count
+>= 0.000219318 <= 0.001 , 0.000609659 , 99.98, 179961
+> 0.001 <= 0.00149682 , 0.00124841 , 100.00, 39
+# target 50% 0.000609741
+# target 75% 0.000804955
+# target 90% 0.000922084
+# target 99% 0.000992361
+# target 99.9% 0.000999388
+Sockets used: 8 (for perfect keepalive, would be 8)
+Jitter: false
+Code 200 : 180000 (100.0 %)
+Response Header Sizes : count 180000 avg 124 +/- 0 min 124 max 124 sum 22320000
+Response Body/Total Sizes : count 180000 avg 124 +/- 0 min 124 max 124 sum 22320000
+All done 180000 calls (plus 8 warmup) 0.503 ms avg, 2999.9 qps
