@@ -11,19 +11,19 @@ export CFGDIR=/config
 export WDIR=$(dirname $0)
 export WDIR=$(cd ${WDIR};pwd)
 export FORTIO=${FORTIO:-fortio}
-
+export PROXY_ADDR=10.128.0.49
 
 set -ex
 
 function runProxy() {
 	local base_id=2
-	local cpu_mask="0x${MASK_BASE}000" # assigning 4 cpus
+	local cpu_mask="0x${MASK_BASE}" # assigning 4 cpus
 	local proxy=$1  # proxy or server
 	local istio=$2  # base or istio
 
 	if [[ "${proxy}" == "proxy" ]];then
 		base_id=4
-		cpu_mask="0x${MASK_BASE}0000"
+		cpu_mask="0x${MASK_BASE}0"
 	fi
 	local service_node="${proxy}-${istio}"
 
@@ -48,7 +48,7 @@ function stopProxies() {
 
 function runTest() {
 	local labels="$1_w${WORKERS}_cpu${CPUS}"
-	taskset 0x7 "${FORTIO}" load -qps "${QPS}" -t 120s -a -r 0.00005 -labels "${labels}" -c "${CONNECTIONS}" http://localhost:9999
+	taskset 0x7 "${FORTIO}" load -qps "${QPS}" -t 120s -a -r 0.00005 -labels "${labels}" -c "${CONNECTIONS}" http://${PROXY_ADDR}:9999
 }
 
 testmode=$1
@@ -63,6 +63,19 @@ case "${testmode}" in
 	exit -1
 esac
 
-runProxies "${testmode}"
-runTest "${testmode}"
-stopProxies "${testmode}"
+fn=$2
+case "${fn}" in
+	setup)
+		runProxies "${testmode}"
+		;;
+	test)
+		runTest "${testmode}"
+		;;
+	shutdown)
+		stopProxies "${testmode}"
+		;;
+	*)
+	echo "setup|test|shutdown"
+	exit -1
+esac
+
