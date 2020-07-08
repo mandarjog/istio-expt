@@ -1,0 +1,16 @@
+This experiment is run on 3 vms on the same network
+
+fortio - run the fotio client. Runs it directly
+proxy - runs the intermediate proxy - Runs it in docker with 1 cpu
+server - runs the serverside proxy and a local response
+
+The ping latency 0.35 ms.
+server mjog_google_com@istio-perf-02-b5cz:~/istio-expt$ ping 10.128.0.48
+PING 10.128.0.48 (10.128.0.48) 56(84) bytes of data.
+64 bytes from 10.128.0.48: icmp_seq=1 ttl=64 time=1.98 ms
+64 bytes from 10.128.0.48: icmp_seq=2 ttl=64 time=0.350 ms
+64 bytes from 10.128.0.48: icmp_seq=3 ttl=64 time=0.321 ms
+64 bytes from 10.128.0.48: icmp_seq=4 ttl=64 time=0.368 ms
+64 bytes from 10.128.0.48: icmp_seq=5 ttl=64 time=0.368 ms
+64 bytes from 10.128.0.48: icmp_seq=6 ttl=64 time=0.313 ms
+
